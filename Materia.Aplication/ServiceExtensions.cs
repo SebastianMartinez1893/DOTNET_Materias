@@ -28,6 +28,8 @@ namespace Materia.Aplication
 
             // Configuración de servicios
             services.AddTransient<IUsuarioServicio, UsuarioServicio>();
+            services.AddTransient<IMateriaProfesorServicio, MateriaProfesorServicio>();
+            services.AddTransient<IMateriaEstudianteServicio, MateriaEstudianteServicio>();
         }
     }
 }

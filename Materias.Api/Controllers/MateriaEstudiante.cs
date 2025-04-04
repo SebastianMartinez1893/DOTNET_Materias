@@ -1,35 +1,36 @@
 ﻿using Materia.Aplication.Comandos;
 using Materia.Aplication.Envoltorios;
-using Materia.Comun.Modelos;
-using MediatR;
+using Materia.Comun.Modelos.MateriaEstudiante;
+using Materia.Comun.Modelos.MateriaEstudianteProfesor;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using static Azure.Core.HttpHeader;
 
 namespace Materias.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsuarioController : BaseController
+    public class MateriaEstudiante : BaseController
     {
-        [HttpPost("InsertarUsuario")]
+        [HttpPost("EstudiantePorMateria")]
         [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Insert([FromBody] Materia.Aplication.Comandos.Usuario request)
+        public async Task<IActionResult> GetEstudiantePorMateria([FromQuery] RequestEstudiantePorMateriaHandler request)
         {
-            Respuesta<int> result = await Mediator.Send(request, new CancellationToken());
+            Respuesta<List<ResponseMateriaEstudiante>> result = await Mediator.Send(request, new CancellationToken());
             return StatusCode(((int)HttpStatusCode.OK), result);
         }
 
-        [HttpGet("ValidarSesion")]
+
+        [HttpPost("EstudianteMateriaProfesor")]
         [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ValidarSesion([FromQuery] ValidacionUsuario request)
+        public async Task<IActionResult> EstudianteMateriaProfesor([FromBody] RequestMateriaEstudianteProfesorHandler request)
         {
-            Respuesta<Materia.Comun.Modelos.Usuario> result = await Mediator.Send(request, new CancellationToken());
+            Respuesta<List<ResponseMateriaEstudianteProfesor>> result = await Mediator.Send(request, new CancellationToken());
             return StatusCode(((int)HttpStatusCode.OK), result);
         }
+
     }
 }

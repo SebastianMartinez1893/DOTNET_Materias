@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Materia.Infraestructura.Interface
 {
-    public interface IUsuarioRepositorio
+    public interface IMateriaProfesorRepositorio
     {
-        Task<(int, string)> IU_Usuario(Usuario usuario);
-        Task<(bool, string, Usuario)> ValidarSesion(Usuario usuario);
+        Task<List<ResponseMateriaProfesorDetalle>> GetMateriasProfesor(RequestMateriaProfesor requestMateria);
     }
 }

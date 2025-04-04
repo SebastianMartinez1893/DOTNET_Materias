@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Materia.Aplication\Materia.Aplication.csproj" />
+    <ProjectReference Include="..\Materia.Comun\Materia.Comun.csproj" />
   </ItemGroup>
 
 </Project>

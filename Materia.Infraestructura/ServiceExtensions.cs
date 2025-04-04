@@ -19,6 +19,8 @@ namespace Materia.Infraestructura
 
             // Configuración de servicios
             services.AddTransient<IUsuarioRepositorio>(sp => new UsuarioRepositorio(ConnectionString));
+            services.AddTransient<IMateriaProfesorRepositorio>(sp => new MateriaProfesorRepositorio(ConnectionString));
+            services.AddTransient<IMateriaEstudianteRepositorio>(sp => new MateriaEstudianteRepositorio(ConnectionString));
             services.AddTransient<EncripcionAES>();
         }
     }
