@@ -13,5 +13,7 @@ namespace Materia.Infraestructura.Interface
         Task<List<ResponseMateriaEstudiante>> ListEstudiantesPorMateria(RequestMateriaEstudiante materiaEstudiante);
 
         Task<List<ResponseMateriaEstudianteProfesor>> GIU_MateriaestudianteProfesor(RequestMateriaEstudianteProfesor requestMateriaEstudiante);
+
+        Task<List<ResponseMateriaEstudiante>> G_EstudiantePorMateria(long IdMateriaProfesor);
     }
 }

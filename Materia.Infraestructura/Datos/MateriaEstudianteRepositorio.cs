@@ -67,6 +67,7 @@ namespace Materia.Infraestructura.Datos
                         IdMateriaProfesor = Convert.ToInt32(reader["IdMateria"]),
                         Materia = reader["Materia"].ToString(),
                         NombreDocente = reader["NombreDocente"].ToString(),
+                        IdProfesor = Convert.ToInt32(reader["IdProfesor"]),
                         EstadoAsignacion = reader["EstadoAsignacion"].ToString(),
                     };
                     ListEstudiantesXProfesor.Add(MateriaDetalle);
@@ -75,6 +76,32 @@ namespace Materia.Infraestructura.Datos
             catch (Exception ex)
             {
                 throw new Exception($"Error al obtener las materias reservadas: {ex.Message}", ex);
+            }
+            return ListEstudiantesXProfesor;
+        }
+
+        public async Task<List<ResponseMateriaEstudiante>> G_EstudiantePorMateria(long IdMateriaProfesor)
+        {
+            List<ResponseMateriaEstudiante> ListEstudiantesXProfesor = [];
+            try
+            {
+                using SqlConnection connection = new(cadenaConexion);
+                using SqlCommand command = new("G_EstudiantePorMateria", connection) { CommandType = CommandType.StoredProcedure };
+                command.Parameters.AddWithValue("@IdMateriaProfesor", IdMateriaProfesor);
+                await connection.OpenAsync();
+                SqlDataReader reader = await command.ExecuteReaderAsync();
+                while (reader.Read())
+                {
+                    ResponseMateriaEstudiante MateriaDetalle = new()
+                    {
+                        NombreEstudiante = reader["NombreEstudiante"].ToString()
+                    };
+                    ListEstudiantesXProfesor.Add(MateriaDetalle);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al obtener los estudiantes por Materia: {ex.Message}", ex);
             }
             return ListEstudiantesXProfesor;
         }

@@ -1,4 +1,5 @@
 ﻿using Materia.Aplication.Comandos;
+using Materia.Aplication.Consulta;
 using Materia.Aplication.Envoltorios;
 using Materia.Comun.Modelos.MateriaEstudiante;
 using Materia.Comun.Modelos.MateriaEstudianteProfesor;
@@ -32,5 +33,14 @@ namespace Materias.Api.Controllers
             return StatusCode(((int)HttpStatusCode.OK), result);
         }
 
+        [HttpGet("EstudianteMateria")]
+        [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetEstudianteMateria([FromQuery] RequestMateriaEstudianteHandler request)
+        {
+            Respuesta<List<ResponseMateriaEstudiante>> result = await Mediator.Send(request, new CancellationToken());
+            return StatusCode(((int)HttpStatusCode.OK), result);
+        }
     }
 }

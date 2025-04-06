@@ -11,6 +11,7 @@ namespace Materia.Comun.Modelos.MateriaEstudianteProfesor
         public int IdMateriaProfesor { get; set; }
         public string? Materia { get; set; }
         public string? NombreDocente { get; set; }
+        public int IdProfesor { get; set; }
         public string? EstadoAsignacion { get; set; }
     }
 }

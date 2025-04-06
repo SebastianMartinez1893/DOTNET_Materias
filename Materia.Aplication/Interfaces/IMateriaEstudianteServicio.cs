@@ -13,5 +13,6 @@ namespace Materia.Aplication.Interfaces
     {
         public Task<Respuesta<List<ResponseMateriaEstudiante>>> EstudiantePorMateria(RequestMateriaEstudiante requestMateriaEstudiante);
         Task<Respuesta<List<ResponseMateriaEstudianteProfesor>>> GIU_MateriaEstudianteProfesor(RequestMateriaEstudianteProfesor requestMateriaEstudiante);
+        Task<Respuesta<List<ResponseMateriaEstudiante>>> EstudiantePorMateria(long IdMateriaProfesor);
     }
 }

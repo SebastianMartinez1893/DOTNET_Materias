@@ -38,6 +38,7 @@ namespace Materia.Infraestructura.Datos
                         IdMateria = Convert.ToInt32(reader["IdMateria"]),
                         Materia = reader["Materia"].ToString(),
                         Estado = reader["Estado"].ToString(),
+                        IdProfesor = reader["IdProfesor"] == DBNull.Value ? 0 : Convert.ToInt32(reader["IdProfesor"]),
                         NombreDocente = reader["NombreDocente"].ToString()
                     };
                     ListMateriaProfesor.Add(profesorDetalle);

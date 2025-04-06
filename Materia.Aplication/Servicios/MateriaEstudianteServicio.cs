@@ -38,6 +38,14 @@ namespace Materia.Aplication.Servicios
                 Valores = ret
             };
         }
-
+        public async Task<Respuesta<List<ResponseMateriaEstudiante>>> EstudiantePorMateria(long IdMateriaProfesor)
+        {
+            var Ret = await _materiaEstudianteRepositorio.G_EstudiantePorMateria(IdMateriaProfesor);
+            return new Respuesta<List<ResponseMateriaEstudiante>>()
+            {
+                CodigoEstado = System.Net.HttpStatusCode.OK,
+                Valores = Ret,
+            };
+        }
     }
 }
