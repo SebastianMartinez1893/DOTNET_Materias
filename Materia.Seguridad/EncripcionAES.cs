@@ -6,9 +6,7 @@ namespace Materia.Seguridad
 {
     public class EncripcionAES
     {
-        private readonly string EncryptionKey = Base64Decode(Llaves.KeyEncryipt);
-        private readonly string PDB = Base64Decode(Llaves.PDB);
-
+        private static readonly byte[] Key = Encoding.UTF8.GetBytes(Base64Decode(Llaves.KeyEncryipt));
         /// <summary>
         /// Metodo Para Cifrar Cadenas con AES128
         /// </summary>
@@ -16,25 +14,33 @@ namespace Materia.Seguridad
         /// <returns></returns>
         public string Encrypt(string encryptString)
         {
-
-            byte[] clearBytes = Encoding.Unicode.GetBytes(encryptString);
-            using (Aes encryptor = Aes.Create())
             {
-                byte[] bytes = Encoding.Default.GetBytes(PDB);
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, bytes);
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                using (MemoryStream ms = new MemoryStream())
+                using (Aes aesAlg = Aes.Create())
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    aesAlg.Key = Key;
+                    aesAlg.Mode = CipherMode.CBC;
+                    aesAlg.Padding = PaddingMode.PKCS7;
+                    aesAlg.GenerateIV();
+                    byte[] iv = aesAlg.IV;
+
+                    ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, iv);
+
+                    using (MemoryStream msEncrypt = new MemoryStream())
                     {
-                        cs.Write(clearBytes, 0, clearBytes.Length);
-                        cs.Close();
+                        // Escribir el IV al principio del stream
+                        msEncrypt.Write(iv, 0, iv.Length);
+                        using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                        {
+                            using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                            {
+                                swEncrypt.Write(encryptString);
+                            }
+                        }
+                        // Devuelve IV + Texto Cifrado como Base64
+                        return Convert.ToBase64String(msEncrypt.ToArray());
                     }
-                    encryptString = Convert.ToBase64String(ms.ToArray());
                 }
             }
-            return encryptString;
         }
 
         /// <summary>
@@ -42,27 +48,35 @@ namespace Materia.Seguridad
         /// </summary>
         /// <param name="cipherText"></param>
         /// <returns></returns>
-        public string Decrypt(string cipherText)
+        public string Decrypt(string cipherTextBase64)
         {
-            cipherText = cipherText.Replace(" ", "+");
-            byte[] cipherBytes = Convert.FromBase64String(cipherText);
-            using (Aes encryptor = Aes.Create())
+            byte[] fullCipher = Convert.FromBase64String(cipherTextBase64);
+
+            using (Aes aesAlg = Aes.Create())
             {
-                byte[] bytes = Encoding.Default.GetBytes(PDB);
-                Rfc2898DeriveBytes pdb = new(EncryptionKey, bytes);
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                using (MemoryStream ms = new MemoryStream())
+                aesAlg.Key = Key;
+                aesAlg.Mode = CipherMode.CBC;
+                aesAlg.Padding = PaddingMode.PKCS7;
+
+                // Extraer el IV del principio
+                byte[] iv = new byte[aesAlg.BlockSize / 8];
+                if (fullCipher.Length < iv.Length) throw new ArgumentException("Texto cifrado inválido o incompleto.");
+                Array.Copy(fullCipher, 0, iv, 0, iv.Length);
+                aesAlg.IV = iv;
+
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                using (MemoryStream msDecrypt = new(fullCipher, iv.Length, fullCipher.Length - iv.Length)) // Leer desde DESPUÉS del IV
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                    using (CryptoStream csDecrypt = new(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
-                        cs.Write(cipherBytes, 0, cipherBytes.Length);
-                        cs.Close();
+                        using (StreamReader srDecrypt = new(csDecrypt))
+                        {
+                            return srDecrypt.ReadToEnd();
+                        }
                     }
-                    cipherText = Encoding.Unicode.GetString(ms.ToArray());
                 }
             }
-            return cipherText;
         }
 
         /// <summary>
@@ -74,21 +88,6 @@ namespace Materia.Seguridad
         {
             byte[] base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-        }
-
-        public static string GetSecretHash(string username, string appClientId, string appSecretKey)
-        {
-            string dataString = username + appClientId;
-            byte[] data = Encoding.UTF8.GetBytes(dataString);
-            byte[] key = Encoding.UTF8.GetBytes(appSecretKey);
-            return Convert.ToBase64String(HmacSHA256(data, key));
-        }
-
-        public static byte[] HmacSHA256(byte[] data, byte[] key)
-        {
-            using HMACSHA256 shaAlgorithm = new(key);
-            byte[] result = shaAlgorithm.ComputeHash(data);
-            return result;
         }
     }
 }

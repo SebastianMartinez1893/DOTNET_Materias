@@ -1,7 +1,9 @@
 ﻿using Materia.Aplication.Envoltorios;
 using Materia.Aplication.Interfaces;
 using Materia.Comun.Modelos;
+using Materia.Seguridad;
 using MediatR;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,35 +13,35 @@ using System.Threading.Tasks;
 
 namespace Materia.Aplication.Comandos
 {
-    public class Usuario : IRequest<Respuesta<int>>
+    public class RequestHandler : IRequest<Respuesta<int>>
     {
-        public long identificacion { get; set; }
-        public string? Nombre { get; set; }
-        public string? Apellido { get; set; }
-        public string? Email { get; set; }
-        public string? celular { get; set; }
-        public string? password { get; set; }
-        public int rolId { get; set; }
+        public string request { get; set; }
+    }
+    public class BodyHandler
+    {
+        public Usuario? body { get; set; }
     }
 
-    public class ComandoUsuarioHandler : IRequestHandler<Usuario, Respuesta<int>>
+    public class ComandoUsuarioHandler : IRequestHandler<RequestHandler, Respuesta<int>>
     {
         private readonly IUsuarioServicio _usuarioServicio;
         public ComandoUsuarioHandler(IUsuarioServicio usuarioServicio)
         {
             _usuarioServicio = usuarioServicio;
         }
-        public Task<Respuesta<int>> Handle(Usuario request, CancellationToken cancellationToken)
+        public Task<Respuesta<int>> Handle(RequestHandler request, CancellationToken cancellationToken)
         {
-            return _usuarioServicio.IU_Usuario(new Comun.Modelos.Usuario()
+            EncripcionAES encrypt = new();
+            Usuario datos = JsonConvert.DeserializeObject<BodyHandler>(encrypt.Decrypt(request.request)).body;
+            return _usuarioServicio.IU_Usuario(new Usuario()
             {
-                identificacion = request.identificacion,
-                Nombre = request.Nombre,
-                Apellido = request.Apellido,
-                Email = request.Email,
-                celular = request.celular,
-                password = request.password,
-                rolId = request.rolId
+                identificacion = datos.identificacion,
+                Nombre = datos.Nombre,
+                Apellido = datos.Apellido,
+                Email = datos.Email,
+                celular = datos.celular,
+                password = datos.password,
+                rolId = datos.rolId
             });
         }
 

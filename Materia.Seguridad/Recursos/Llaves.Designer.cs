@@ -61,7 +61,7 @@ namespace Materia.Seguridad.Recursos {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a SW50M3JyNHAxZDFzMW0wQ2w0UzMzbmNyMXBjMTBuUHQy.
+        ///   Busca una cadena traducida similar a SW50M3JyNHAxZDFzMW0wQ2w0UzMzbmNyMXBjMTBuUHQ=.
         /// </summary>
         internal static string KeyEncryipt {
             get {
@@ -70,7 +70,7 @@ namespace Materia.Seguridad.Recursos {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a SW50M3JyNHAxZDFzMW0wQ2w0UzMzbmNyMXBjMTBuUHQy.
+        ///   Busca una cadena traducida similar a SW50M3JyNHAxZDFzMW0wQ2w0UzMzbmNyMXBjMTBuUHQ=.
         /// </summary>
         internal static string PDB {
             get {

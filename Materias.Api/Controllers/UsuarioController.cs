@@ -16,7 +16,7 @@ namespace Materias.Api.Controllers
         [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Respuesta<long>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Insert([FromBody] Materia.Aplication.Comandos.Usuario request)
+        public async Task<IActionResult> Insert([FromBody] RequestHandler request)
         {
             Respuesta<int> result = await Mediator.Send(request, new CancellationToken());
             return StatusCode(((int)HttpStatusCode.OK), result);
